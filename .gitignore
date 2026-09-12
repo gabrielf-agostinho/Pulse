@@ -1,0 +1,9 @@
+/pulse
+/pulse.exe
+*.test
+*.out
+*.prof
+/dist/
+*.db
+*.db-wal
+*.db-shm
