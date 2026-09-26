@@ -1,0 +1,146 @@
+# Pulse config
+# All settings are optional. Durations: 500ms, 30s, 5m, 2h, 7d
+# Check it with: pulse config validate --config config.yaml
+
+general:
+  live_window: 5m
+
+ui:
+  charts: braille # braille | blocks
+  fps: 20
+  start_screen: overview # overview | processes | services | alerts | history | settings
+
+collectors:
+  cpu:
+    enabled: true
+    interval: 1s
+    timeout: 2s
+  memory:
+    enabled: true
+    interval: 1s
+    timeout: 2s
+  disk:
+    enabled: true
+    interval: 2s
+    timeout: 5s
+    exclude_fstypes: [tmpfs, devtmpfs, squashfs, overlay, proc, sysfs, cgroup, cgroup2, autofs, devfs, nullfs, ramfs, fuse.snapfuse]
+    exclude_mounts: []
+  network:
+    enabled: true
+    interval: 1s
+    timeout: 2s
+    exclude_interfaces: []
+  processes:
+    enabled: true
+    interval: 3s
+    timeout: 8s
+    allow_kill: true
+  host:
+    enabled: true
+    interval: 30s
+    timeout: 5s
+
+scheduler:
+  max_concurrency: 6
+
+storage:
+  enabled: true
+  path: "" # empty = <data dir>/pulse.db
+  resolution: 10s
+  queue_size: 4096
+  batch_size: 512
+  flush_interval: 2s
+  enqueue_timeout: 2s
+  retention:
+    metrics: 7d
+    service_checks: 7d
+    alerts: 30d
+    interval: 1h
+
+services:
+  max_concurrency: 4
+  defaults:
+    interval: 30s
+    timeout: 5s
+    degraded_latency: 1s
+    failure_threshold: 2
+  targets:
+    - id: github
+      name: GitHub API
+      type: http
+      url: https://api.github.com/zen
+      interval: 30s
+      expect_status: [200]
+
+    - id: cloudflare-dns
+      name: Cloudflare DNS
+      type: tcp
+      address: 1.1.1.1:53
+      interval: 15s
+      timeout: 2s
+
+    - id: local-api
+      name: Local API
+      type: http
+      url: http://localhost:8080/healthz
+      method: GET
+      interval: 10s
+      timeout: 2s
+      degraded_latency: 300ms
+      # headers: { Authorization: "Bearer ${API_TOKEN}" }
+      # tls_skip_verify: false
+
+alerts:
+  enabled: true
+  rules:
+    - id: cpu-high
+      name: CPU saturated
+      metric: cpu.usage
+      operator: ">"
+      threshold: 90
+      for: 1m
+      hysteresis: 10
+      clear_for: 30s
+      severity: warning # info | warning | critical
+
+    - id: memory-high
+      name: Memory pressure
+      metric: mem.used_pct
+      operator: ">"
+      threshold: 92
+      for: 2m
+      hysteresis: 4
+      clear_for: 30s
+      severity: critical
+
+    - id: disk-full
+      name: Volume almost full
+      metric: disk.used_pct
+      operator: ">"
+      threshold: 95
+      for: 1m
+      hysteresis: 2
+      severity: warning
+
+    - id: service-down
+      name: Service down
+      metric: service.up
+      operator: "<"
+      threshold: 1
+      severity: critical
+
+    # condition: down | latency (ms)
+    - id: local-api-slow
+      name: Local API slow
+      service: local-api
+      condition: latency
+      threshold: 500
+      for: 1m
+      hysteresis: 100
+      severity: warning
+
+logging:
+  level: info # debug | info | warn | error
+  format: text # text | json
+  file: "" # empty = <data dir>/logs/pulse.log, "-" disables
+  max_size_mb: 10
