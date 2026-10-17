@@ -4,6 +4,7 @@
 *.out
 *.prof
 /dist/
+/snapshots/
 *.db
 *.db-wal
 *.db-shm

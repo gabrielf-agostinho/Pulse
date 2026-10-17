@@ -35,6 +35,7 @@ Usage:
   pulse config init [path]      write the annotated example configuration
   pulse config validate         validate the configuration and exit
   pulse config path             print where configuration and data live
+  pulse snapshot [flags]        render screens with live data to files (for docs/CI)
   pulse version                 print version information
 
 Flags:
@@ -52,6 +53,8 @@ func run(args []string, stdout, stderr io.Writer) int {
 			return 0
 		case "config":
 			return configCmd(args[1:], stdout, stderr)
+		case "snapshot":
+			return snapshotCmd(args[1:], stdout, stderr)
 		case "help", "-h", "--help":
 			fmt.Fprint(stdout, usage)
 			flags(io.Discard).PrintDefaults()
