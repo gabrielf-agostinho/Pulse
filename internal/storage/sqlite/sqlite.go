@@ -68,7 +68,7 @@ func (s *Store) Close() error {
 		errs = append(errs, s.read.Close())
 	}
 	if s.write != nil {
-		_, _ = s.write.Exec("PRAGMA wal_checkpoint(TRUNCATE)")
+		_, _ = s.write.ExecContext(context.Background(), "PRAGMA wal_checkpoint(TRUNCATE)")
 		errs = append(errs, s.write.Close())
 	}
 	return errors.Join(errs...)

@@ -75,11 +75,11 @@ func snapshotCmd(args []string, stdout, stderr io.Writer) int {
 		frame := snap.Render(idx, tui.ParseKeys(keys[name]))
 		base := filepath.Join(*out, strings.ToLower(name))
 		title := fmt.Sprintf("pulse %s %d×%d", strings.ToLower(name), cols, rows)
-		if err := os.WriteFile(base+".ans", []byte(frame), 0o640); err != nil {
+		if err := os.WriteFile(base+".ans", []byte(frame), 0o600); err != nil {
 			fmt.Fprintln(stderr, "pulse:", err)
 			code = 1
 		}
-		if err := os.WriteFile(base+".html", []byte(tui.ExportHTML(frame, title, cols, rows)), 0o640); err != nil {
+		if err := os.WriteFile(base+".html", []byte(tui.ExportHTML(frame, title, cols, rows)), 0o600); err != nil {
 			fmt.Fprintln(stderr, "pulse:", err)
 			code = 1
 		}

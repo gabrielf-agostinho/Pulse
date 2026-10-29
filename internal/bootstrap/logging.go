@@ -30,7 +30,7 @@ func openLog(c config.Logging) (*slog.Logger, io.Closer, error) {
 		return nil, nil, fmt.Errorf("log directory: %w", err)
 	}
 	rotate(c.File, int64(c.MaxSizeMB)<<20)
-	f, err := os.OpenFile(c.File, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0o640)
+	f, err := os.OpenFile(c.File, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0o600)
 	if err != nil {
 		return nil, nil, fmt.Errorf("open log file: %w", err)
 	}

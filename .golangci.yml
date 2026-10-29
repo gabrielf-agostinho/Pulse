@@ -10,11 +10,18 @@ linters:
     - noctx
     - unconvert
   settings:
+    errcheck:
+      exclude-functions:
+        - golang.org/x/sys/windows.CloseHandle
     gosec:
       excludes:
         - G104
+        - G115
         - G304
+        - G703
   exclusions:
+    presets:
+      - std-error-handling
     rules:
       - path: _test\.go
         linters: [gosec, noctx]

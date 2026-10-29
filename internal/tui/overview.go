@@ -396,7 +396,6 @@ func (o *overview) disk(v vctx, w, h int) string {
 		}
 		if shown == room-1 && len(vols)-shown > 1 {
 			body = append(body, theme.C(theme.Muted, fmt.Sprintf("+%d more volumes", len(vols)-shown)))
-			shown++
 			break
 		}
 		name := c.Fit(theme.C(theme.Subtle, vol.Mount), mountW)
